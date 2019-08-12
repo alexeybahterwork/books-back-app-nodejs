@@ -1,7 +1,7 @@
+import "../config";
 import * as jwt from "jsonwebtoken";
 import passport from "passport";
-import "../config/passport";
-import {jwtConfig} from "../config/jwt";
+import "../middlewares/passport";
 
 export const authUser = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
@@ -15,8 +15,7 @@ export const authUser = (req, res, next) => {
             if (error) {
                 res.send(error);
             }
-
-            const token = jwt.sign({id: user.id}, jwtConfig.secretOrKey, {expiresIn: "1d"});
+            const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: "1d"});
             return res.json({user, token});
         });
     })(req, res);

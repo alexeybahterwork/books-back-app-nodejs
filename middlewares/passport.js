@@ -1,9 +1,9 @@
+import '../config'
 import * as bcrypt from "bcryptjs";
 import passport from "passport";
 import User from "../models/user";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
-import { jwtConfig } from "./jwt";
 
 passport.use("local", new LocalStrategy({
         usernameField: "email",
@@ -27,7 +27,7 @@ passport.use("local", new LocalStrategy({
 
 passport.use("jwt", new JWTStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    ...jwtConfig
+    secretOrKey: process.env.JWT_SECRET
 }, (jwtPayload, done) => {
     try {
         User.findOne({

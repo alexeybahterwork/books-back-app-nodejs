@@ -1,4 +1,4 @@
-import * as Book from '../models/book'
+import * as Book from '../middlewares/book'
 
 export const listOfBooks = (req, res) => {
     const {page, per_page, sortItem='id', sortMethod='desc'} = req.query;

@@ -1,4 +1,4 @@
-import * as User from '../models/user'
+import * as User from '../middlewares/user'
 
 export const listOfBUsers = (req, res) => {
     return User.findAllUsers()

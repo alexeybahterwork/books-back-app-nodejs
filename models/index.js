@@ -10,5 +10,5 @@ const sequelize = new Sequelize(postgresUrl, {
 
 export const db = sequelize;
 
-User.hasMany(Book, {as: 'author', foreignKey : 'user_id'});
-Book.belongsTo(User, {as: 'author', foreignKey : 'user_id'});
+User.hasMany(Book, {onDelete: "CASCADE", as: 'author', foreignKey : 'user_id'});
+Book.belongsTo(User, {onDelete: "CASCADE", as: 'author', foreignKey : 'user_id'});

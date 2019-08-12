@@ -1,18 +1,9 @@
-import express from 'express';
-import * as BooksController from '../controllers/book';
-import * as UserController from '../controllers/user';
-import * as authController from "../controllers/auth";
-import userRouter from './users'
-const router = express.Router();
+import {Router} from 'express';
+import * as glob from 'glob'
 
-router.get('/', ({res}) => res.send('API is OK!'));
+const routes = glob.sync('**/*.js', { cwd: `${__dirname}/` })
+    .map(filename => require(`./${filename}`))
+    .filter(router => Object.getPrototypeOf(router) === Router)
+    .reduce((rootRouter, router) => {return rootRouter.use(router)}, Router({ mergeParams: true }))
 
-router.post('/auth', authController.authUser);
-
-router.get('/users', authController.checkAuth, UserController.listOfBUsers);
-
-router.get('/books', authController.checkAuth, BooksController.listOfBooks);
-router.get('/books/:bookId', authController.checkAuth, BooksController.oneBook);
-router.post('/books/new', authController.checkAuth, BooksController.createBook);
-userRouter
-export default router;
+export default routes

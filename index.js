@@ -2,17 +2,20 @@ import dotenv from 'dotenv'
 import express from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import "./config/passport";
+import helmet from 'helmet'
+import "./middlewares/passport";
+
+import routes from './routes'
 import { db } from './models';
-import router from './routes';
+
 const app = express();
 dotenv.config();
 
-// Parse incoming requests data
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize({}));
+app.use(passport.session({}));
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", "true");
@@ -22,7 +25,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(router);
+app.use(routes);
 
 db.authenticate()
   .then(() => {
@@ -31,8 +34,6 @@ db.authenticate()
     console.info('Unable to connect to postgres:', err);
   });
 
-const PORT = 4000;
-
-app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`server running on port ${process.env.PORT}`);
 });

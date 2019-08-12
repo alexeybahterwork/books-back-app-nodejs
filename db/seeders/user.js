@@ -4,7 +4,7 @@ import { hashPassword } from "../../models/user";
 
 Promise.resolve()
     .then(async () => {
-        const user = {email: "example@example.com", password: "123456"};
+        const user = {email: "example2@example.com", password: "123456"};
         const existingUser = await User.findOne({ where: { email: user.email }});
         if (existingUser) {
             console.info("user already exist", existingUser.toJSON());

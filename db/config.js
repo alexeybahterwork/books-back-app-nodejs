@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import '../config'
 
 const user = process.env.POSTGRES_USER;
 const password = process.env.POSTGRES_PASSWORD;
