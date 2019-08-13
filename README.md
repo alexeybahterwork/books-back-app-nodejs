@@ -1,6 +1,6 @@
 # Books-NodeJS-App
 
-Create '.env' file.
+Create the '.env' file in root directory.
  
 Example:
 
@@ -16,6 +16,7 @@ JWT_SECRET=13245
 Commands:
 
 ~~~
+npm run db:seed 
 npm run db:migrate 
 npm start
 ~~~
