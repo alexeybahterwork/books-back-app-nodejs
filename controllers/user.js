@@ -1,7 +1,10 @@
 import * as User from '../middlewares/user'
 
-export const listOfBUsers = (req, res) => {
-    return User.findAllUsers()
-        .then((rez) => res.status(200).send(rez))
-        .catch((error) => res.status(400).send(error.message));
+export const listOfBUsers = async (req, res) => {
+    try {
+        const users = await User.findAllUsers();
+        return res.status(200).json(users);
+    } catch(error) {
+        return res.status(400).json(error.message);
+    }
 };

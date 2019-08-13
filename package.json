@@ -6,7 +6,7 @@
   "scripts": {
     "test": "",
     "db:migrate": "sequelize db:migrate",
-    "start": "nodemon index.js --exec babel-node --",
+    "start": "NODE_ENV=development nodemon index.js --exec babel-node --",
     "db:seed": "nodemon db/seeders/user.js --exec babel-node --"
   },
   "author": "",
