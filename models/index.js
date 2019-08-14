@@ -1,14 +1,32 @@
+import path from 'path';
+import fs from 'fs';
 import { Sequelize } from "sequelize";
 import { postgresUrl } from "../db/config";
-import Book from './book'
-import User from './user'
+
 const sequelize = new Sequelize(postgresUrl, {
     dialect: "postgres",
     logging: false,
     define: { underscored: true }
 });
 
-export const db = sequelize;
+const basename = path.basename(__filename);
 
-User.hasMany(Book, {onDelete: "CASCADE", as: 'author', foreignKey : 'user_id'});
-Book.belongsTo(User, {onDelete: "CASCADE", as: 'author', foreignKey : 'user_id'});
+const models = Object.assign({}, ...fs.readdirSync(__dirname)
+    .filter(file =>
+        (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js')
+    )
+    .map(file => {
+        const model = require(path.join(__dirname, file));
+        return {
+            [model.name]: model.init(sequelize),
+        };
+    })
+);
+
+Object.keys(models).forEach((modelName) => {
+    if (typeof models[modelName].associate === 'function') {
+        models[modelName].associate(models)
+    }
+});
+
+module.exports = models;

@@ -1,4 +1,4 @@
-const tableName = "Users";
+const tableName = "users";
 
 module.exports = {
     up: (queryInterface, dataTypes) => {
@@ -13,14 +13,14 @@ module.exports = {
                 type: new dataTypes.STRING,
                 allowNull: false,
             },
-            encryptedPassword: {
+            encrypted_password: {
                 type: new dataTypes.STRING,
                 allowNull: false,
             },
-            createdAt: {
+            created_at: {
                 type: new dataTypes.DATE,
             },
-            updatedAt: {
+            updated_at: {
                 type: new dataTypes.DATE,
             }
         })

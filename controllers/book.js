@@ -49,6 +49,6 @@ export const createBook = async (req, res) => {
         const createdBook = await Book.createBook(params);
         return res.status(200).json(createdBook)
     } catch (error) {
-        return res.status(400).json(error);
+        return res.status(400).json(error.message);
     }
 };

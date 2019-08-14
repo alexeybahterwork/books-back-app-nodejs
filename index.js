@@ -6,7 +6,6 @@ import helmet from 'helmet'
 import "./middlewares/passport";
 
 import routes from './routes'
-import { db } from './models';
 
 const app = express();
 dotenv.config();
@@ -26,13 +25,6 @@ app.use((req, res, next) => {
 });
 
 app.use(routes);
-
-db.authenticate()
-  .then(() => {
-    console.info('Connection to postgres has been established successfully.');
-  }, (err) => {
-    console.info('Unable to connect to postgres:', err);
-  });
 
 app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);

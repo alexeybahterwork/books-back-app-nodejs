@@ -1,14 +1,20 @@
-import {Model, Sequelize} from "sequelize";
-import {postgresUrl} from "../db/config";
+import { DataTypes, Model } from "sequelize";
 
-const sequelize = new Sequelize(postgresUrl);
+module.exports =
+class Book extends Model {
+    static init(sequelize) {
+        return super.init({
+            title: DataTypes.STRING,
+            description: DataTypes.STRING,
+            price: DataTypes.STRING
+        }, {sequelize});
+    }
 
-class Book extends Model {}
-
-Book.init({
-    title: Sequelize.STRING,
-    description: Sequelize.STRING,
-    price: Sequelize.STRING,
-}, {sequelize});
-
-export default Book;
+    static associate(models) {
+        this.belongsTo(models.User, {
+            onDelete: "CASCADE",
+            // as: 'author',
+            foreignKey: 'user_id'
+        });
+    }
+};

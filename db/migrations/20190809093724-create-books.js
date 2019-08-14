@@ -1,4 +1,4 @@
-const tableName = "Books";
+const tableName = "books";
 
 module.exports = {
     up: (queryInterface, DataTypes) => {
@@ -23,14 +23,14 @@ module.exports = {
             user_id: {
                 type: DataTypes.INTEGER,
                 references: {
-                    model: 'Users',
+                    model: 'users',
                     key: 'id'
                 }
             },
-            createdAt: {
+            created_at: {
                 type: DataTypes.DATE
             },
-            updatedAt: {
+            updated_at: {
                 type: DataTypes.DATE
             }
         });
