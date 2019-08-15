@@ -1,6 +1,6 @@
 import * as Book from '../middlewares/book'
 
-export const listOfBooks = async (req, res) => {
+export const getBooks = async (req, res) => {
     const {page=1, per_page=3, sortItem='id', sortMethod='desc'} = req.query;
     let totalItems;
 
@@ -23,7 +23,7 @@ export const listOfBooks = async (req, res) => {
     }
 };
 
-export const oneBook = async (req, res) => {
+export const getBook = async (req, res) => {
     const {bookId} = req.params;
 
     try {
