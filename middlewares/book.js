@@ -8,7 +8,7 @@ export const findAllBooks = ({page = 1, per_page = 3, sortItem = 'id', sortMetho
         limit: per_page,
         order: [[sortItem, sortMethod]],
         include: [{
-            model: models.User,
+            model: User,
             // as: 'author',
             attributes: {
                 exclude: ['encryptedPassword', 'createdAt', 'updatedAt']

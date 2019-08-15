@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Sequelize } from "sequelize";
 import { postgresUrl } from "../db/config";
 
-const sequelize = new Sequelize(postgresUrl, {
+export const sequelize = new Sequelize(postgresUrl, {
     dialect: "postgres",
     logging: false,
     define: { underscored: true }
@@ -18,7 +18,7 @@ const models = Object.assign({}, ...fs.readdirSync(__dirname)
     .map(file => {
         const model = require(path.join(__dirname, file));
         return {
-            [model.name]: model.init(sequelize),
+            [model.default.name]: model.default.init(sequelize),
         };
     })
 );
@@ -29,4 +29,4 @@ Object.keys(models).forEach((modelName) => {
     }
 });
 
-module.exports = models;
+export default models;
