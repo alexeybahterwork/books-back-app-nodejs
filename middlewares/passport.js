@@ -1,7 +1,7 @@
 import * as config from '../config/index'
 import * as bcrypt from "bcryptjs";
 import passport from "passport";
-import User from "../models/user";
+import models from "../models";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 
@@ -9,7 +9,7 @@ passport.use("local", new LocalStrategy({
         usernameField: "email",
         passwordField: "password",
     }, async (email, password, done ) => {
-        const user = await User.findOne({
+        const user = await models.User.findOne({
             where: { email },
             attributes: ["id", "encryptedPassword"],
             raw: true,
@@ -30,7 +30,7 @@ passport.use("jwt", new JWTStrategy({
     secretOrKey: config.jwt_secret
 }, (jwtPayload, done) => {
     try {
-        User.findOne({
+        models.User.findOne({
             where: {
                 id: jwtPayload.id
             }
@@ -51,12 +51,12 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-    const user = User.findOne({
+    const user = models.User.findOne({
         where: { id },
         raw: true,
     });
     user ? done(null, user) : done(null);
-    User.findOne({ where: { id }})
+    models.User.findOne({ where: { id }})
         .then(desUser => {
             done(null, desUser);
         })
