@@ -1,4 +1,4 @@
-import "../config";
+import * as config from "../config/index";
 import * as jwt from "jsonwebtoken";
 import passport from "passport";
 import "../middlewares/passport";
@@ -14,12 +14,12 @@ export const authUser = (req, res, next) => {
                 if (error) {
                     return res.status(400).json({message: error})
                 }
-                const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: "1d"});
+                const token = jwt.sign({id: user.id}, config.jwt_secret, {expiresIn: "1d"});
                 return res.status(200).json({user, token});
             });
         })(req, res);
     } catch (error) {
-        return res.status(400).json(error);
+        return res.status(400).json({message: error});
     }
 };
 
@@ -30,12 +30,12 @@ export const checkAuth = (req, res, next) => {
                 console.error(err);
             }
             if (info) {
-                res.status(400).json(info.message);
+                res.status(400).json({message: info.message});
             } else {
                 next();
             }
         })(req, res, next);
     } catch(error) {
-        return res.status(400).json(error.message);
+        return res.status(400).json({message: error.message});
     }
 };

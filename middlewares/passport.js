@@ -1,4 +1,4 @@
-import '../config'
+import * as config from '../config/index'
 import * as bcrypt from "bcryptjs";
 import passport from "passport";
 import User from "../models/user";
@@ -27,7 +27,7 @@ passport.use("local", new LocalStrategy({
 
 passport.use("jwt", new JWTStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
+    secretOrKey: config.jwt_secret
 }, (jwtPayload, done) => {
     try {
         User.findOne({
@@ -42,7 +42,7 @@ passport.use("jwt", new JWTStrategy({
             }
         });
     } catch (err) {
-        console.error(err);
+        console.error(`${err} in passport.js`);
     }
 }));
 

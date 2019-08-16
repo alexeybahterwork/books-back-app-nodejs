@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "",
-    "db:migrate": "sequelize db:migrate",
+    "db:migrate": "NODE_ENV=development sequelize db:migrate",
     "db:migrate:prod": "NODE_ENV=production sequelize db:migrate",
     "start": "NODE_ENV=development nodemon index.js --exec babel-node --",
     "db:seed": "nodemon db/seeders/user.js --exec babel-node --"

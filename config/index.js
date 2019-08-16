@@ -1,31 +1,39 @@
-import dotenv from 'dotenv'
-import { resolve } from 'path';
-
-let envPath = "/home/fusion/Downloads/books-app-nodejs/.env";
+const env = process.env.NODE_ENV || 'development';
+let localConfig;
 
 try {
-    switch (process.env.NODE_ENV) {
-        case "production":
-            envPath = resolve('./config/.env.production');
-            break;
-        case 'test':
-            envPath = resolve('./config/.env.test');
-            break;
-        default:
-            break;
-    }
-} catch (error) {
-    console.log(`${error.message} in config/index.js`)
+    localConfig = require('./config.json');
+} catch (err) {
+    console.error('Local config not found', err);
 }
 
-export default dotenv.config({path: envPath});
-
-module.exports = {
-    [process.env.NODE_ENV || 'development']: {
-        "username": process.env.POSTGRES_USER,
-        "password": process.env.POSTGRES_PASSWORD,
-        "database": process.env.POSTGRES_DB,
-        "host": process.env.POSTGRES_HOST,
-        "dialect": "postgres"
+let config = {
+    development: {
+        "username": "fusion",
+        "password": "fusion",
+        "database": "books_db_test_task",
+        "host": "localhost",
+        "port": 4000,
+        "postgres_port": "5432",
+        "dialect": "postgres",
+        "jwt_secret": "12345"
+    },
+    test: {
+        "username": "fusion",
+        "password": "fusion",
+        "database": "books_db_test_task",
+        "host": "localhost",
+        "port": 4000,
+        "postgres_port": "5432",
+        "dialect": "postgres",
+        "jwt_secret": "12345"
+    },
+    production: {
     }
 };
+
+if (localConfig) {
+    config = Object.assign(config, localConfig);
+}
+
+module.exports = config[env];

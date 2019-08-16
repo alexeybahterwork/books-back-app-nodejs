@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import * as config from './config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
@@ -26,6 +27,6 @@ app.use((req, res, next) => {
 
 app.use(routes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`server running on port ${process.env.PORT}`);
+app.listen(config.port, () => {
+  console.log(`server running on port ${config.port}`);
 });

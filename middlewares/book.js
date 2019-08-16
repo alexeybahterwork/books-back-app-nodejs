@@ -1,6 +1,5 @@
 import User from "../models/user";
 import Book from "../models/book";
-import models from "../models";
 
 export const findAllBooks = ({page = 1, per_page = 3, sortItem = 'id', sortMethod = 'ASC'}) => {
     return Book.findAndCountAll({
@@ -9,7 +8,6 @@ export const findAllBooks = ({page = 1, per_page = 3, sortItem = 'id', sortMetho
         order: [[sortItem, sortMethod]],
         include: [{
             model: User,
-            // as: 'author',
             attributes: {
                 exclude: ['encryptedPassword', 'createdAt', 'updatedAt']
             }
@@ -23,7 +21,6 @@ export const findOneBook = (id) => {
         where: {id},
         include: [{
             model: User,
-            // as: 'author',
             attributes: {
                 exclude: ['encryptedPassword', 'createdAt', 'updatedAt']
             }
