@@ -27,9 +27,10 @@ passport.use("local", new LocalStrategy({
 
 passport.use("jwt", new JWTStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.jwt_secret
+    secretOrKey: config.common.jwt_secret
 }, (jwtPayload, done) => {
     try {
+        console.log("jwtPayload", jwtPayload)
         models.User.findOne({
             where: {
                 id: jwtPayload.id

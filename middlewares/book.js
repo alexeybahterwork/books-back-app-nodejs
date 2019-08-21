@@ -2,6 +2,7 @@ import User from "../models/user";
 import Book from "../models/book";
 
 export const findAllBooks = ({page = 1, per_page = 3, sortItem = 'id', sortMethod = 'ASC'}) => {
+
     return Book.findAndCountAll({
         offset: (page * per_page) - per_page,
         limit: per_page,

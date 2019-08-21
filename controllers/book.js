@@ -10,6 +10,7 @@ export const getBooks = async (req, res) => {
             throw new Error({status: 400, message: 'Page is empty'})
         }
 
+        // const newToken = res.locales.newToken
         const booksWithCount = await Book.findAllBooks({page, per_page, sortItem: sortItem, sortMethod: sortMethod});
         const books = JSON.parse(JSON.stringify(booksWithCount.rows));
         totalItems = JSON.stringify(booksWithCount.count);

@@ -1,17 +1,32 @@
-import User from "../../models/user";
+import models from "../../models";
 import { hashPassword } from "../../middlewares/user";
+import * as jwt from "jsonwebtoken";
+import * as config from "../../config";
+import redisClient from '../../redis'
+
 
 Promise.resolve()
     .then(async () => {
-        const user = {email: "example2@example.com", password: "123456"};
-        const existingUser = await User.findOne({ where: { email: user.email }});
+        const user = {email: "test_example_36@example.com", password: "123456"};
+        const existingUser = await models.User.findOne({ where: { email: user.email }});
 
         if (existingUser) {
             console.info("user already exist", existingUser.toJSON());
         } else {
-            await User.create({
+             const newUser = await models.User.create({
                 ...user,
                 encryptedPassword: await hashPassword(user.password),
+            });
+
+            const userParse = JSON.parse(JSON.stringify(newUser));
+
+            const refreshToken = jwt.sign({id: userParse.id}, config.common.jwt_secret, {expiresIn: "60d"});
+
+            console.log("user-${userParse.id}", `user-${userParse.id}`);
+
+            redisClient.hmset(`refreshTokenUser${userParse.id}`, `refreshTokenTimestamp-${userParse.id}`, refreshToken, function (err, res) {
+                console.log("err", err);
+                console.log("res", res);
             });
             console.info("user has been created", user);
         }
