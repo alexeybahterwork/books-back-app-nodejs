@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import * as AuthController from "../controllers/auth";
-import * as BooksController from "../controllers/book";
+import * as authController from "../controllers/auth";
+import * as booksController from "../controllers/book";
 
 module.exports = Router({mergeParams: true})
-    .get('/books', AuthController.checkAuth, BooksController.getBooks)
-    .get('/books/:bookId', AuthController.checkAuth, BooksController.getBook)
-    .post('/books/new', AuthController.checkAuth, BooksController.createBook);
+    .get('/books', authController.checkAuth, booksController.getBooks)
+    .get('/books/:bookId', authController.checkAuth, booksController.getBook)
+    .post('/books/new', authController.checkAuth, booksController.createBook);

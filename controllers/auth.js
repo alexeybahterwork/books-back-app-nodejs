@@ -2,6 +2,7 @@ import * as config from "../config/index";
 import * as jwt from "jsonwebtoken";
 import * as _ from 'lodash';
 import uuidv4 from 'uuid/v4';
+import moment from "moment";
 
 import passport from "passport";
 import "../middlewares/passport";
@@ -14,49 +15,33 @@ export const authUser = (req, res, next) => {
                 return res.status(400).json({message: 'Something is not right'})
             }
 
-            console.log("authUser user ", user);
             req.login(user, async error => {
-                if (error) return res.status(400).json({message: error})
+                if (error) return res.status(400).json({message: error});
 
-                const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
-                const accessToken = jwt.sign({id: user.id}, config.common.jwt_secret, {expiresIn: "1d"});
                 const maxLoggedUsers = 5;
-                const countLoggedUsers = refreshTokens ? Object.keys(refreshTokens).length : 5;
+                const oneDay = moment().add(config.common.accessTokenExpiresIn,'days').unix();
+                const thirtyDays = moment().add(config.common.refreshTokenExpiresIn,'days').unix();
+                const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
+                const countLoggedUsers = refreshTokens ? Object.keys(refreshTokens).length + 1 : 0;
 
-                if (countLoggedUsers < maxLoggedUsers) {
-                    const refreshToken = jwt.sign({id: user.id}, config.common.jwt_refresh_secret, {expiresIn: config.common.refreshTokenExpiresIn});
-                    const uuid = uuidv4();
-
-                    await redisClient.hmset(`refreshTokenUser${user.id}`, `refreshTokenTimestamp-${uuid}`, refreshToken);
-
-                    const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
-                    const response = {
-                        "status": "Logged in",
-                        "token": accessToken,
-                        refreshTokens,
-                    };
-
-                    console.log("if response", response);
-
-                    return res.status(200).json(response);
-                } else {
-
+                if (countLoggedUsers > maxLoggedUsers) {
                     redisClient.del(`refreshTokenUser${user.id}`);
-
-                    const uuid = uuidv4();
-                    const refreshToken = jwt.sign({id: user.id}, config.common.jwt_refresh_secret, {expiresIn: config.common.refreshTokenExpiresIn});
-
-                    redisClient.hmset(`refreshTokenUser${user.id}`, `refreshTokenTimestamp-${uuid}`, refreshToken);
-
-                    const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
-                    const response = {
-                        "status": "Logged in",
-                        "token": accessToken,
-                        refreshTokens,
-                    };
-                    console.log("else response", response)
-                    return res.status(200).json(response);
                 }
+
+                const accessToken = jwt.sign({exp: oneDay, id: user.id}, config.common.jwt_secret);
+                const refreshToken = jwt.sign({exp: thirtyDays, id: user.id}, config.common.jwt_refresh_secret);
+                const uuid = uuidv4();
+
+                await redisClient.hmset(`refreshTokenUser${user.id}`, `refreshTokenTimestamp-${uuid}`, refreshToken);
+
+                const response = {
+                    "status": "Logged in",
+                    accessToken,
+                    refreshToken,
+                    expiresIn: oneDay,
+                };
+
+                return res.status(200).json(response);
             });
         })(req, res);
     } catch (error) {
@@ -68,21 +53,18 @@ export const checkAuth = (req, res, next) => {
     try {
         passport.authenticate("jwt", {session: false}, async (err, user, info) => {
             if (err) throw new Error(err);
-            if (!user) {
-                throw new Error('User is missing');
-            }
+
             const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
 
-            if (!refreshTokens) {
+            if (!refreshTokens || !user) {
                 return res.status(400).json({status: 'Not logged in', message: 'User not authorized'});
             }
 
             if (info) {
-                throw new Error('Error! You have same info.');
+                throw new Error('Error! You have same errors.');
             } else {
                 next();
             }
-
         })(req, res, next);
     } catch (error) {
         return res.status(400).json({message: error.message});
@@ -118,32 +100,25 @@ export const getNewAccessToken = async (req, res, next) => {
         const jwtPayload = jwt.verify(refreshTokenReq, config.common.jwt_refresh_secret);
         const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${jwtPayload.id}`);
 
-        if (!refreshTokens) throw new Error('User not authorized.')
+        if (!refreshTokens) throw new Error('User not authorized.');
 
+        const oneDay = moment().add(config.common.accessTokenExpiresIn,'days').unix();
+        const thirtyDays = moment().add(config.common.refreshTokenExpiresIn,'days').unix();
         let response = {};
 
-        console.log("userParsed", jwtPayload);
-        console.log("---refreshToken Keys---", Object.keys(refreshTokens));
-        console.log("---refreshTokenReq", refreshTokenReq);
-
         for (let tokenTimeStampName in refreshTokens) {
-            console.log("---refreshTokens[timestampName]", tokenTimeStampName, refreshTokens[tokenTimeStampName]);
-
             if (refreshTokenReq === refreshTokens[tokenTimeStampName]) {
-                const accessToken = jwt.sign({id: jwtPayload.id}, config.common.jwt_secret, {expiresIn: config.common.accessTokenExpiresIn});
-                const refreshToken = jwt.sign({id: jwtPayload.id}, config.common.jwt_refresh_secret, {expiresIn: config.common.refreshTokenExpiresIn});
-                const timeStamp = {"timeStamp": tokenTimeStampName};
+                const accessToken = jwt.sign({exp: oneDay, id: jwtPayload.id}, config.common.jwt_secret);
+                const refreshToken = jwt.sign({exp: thirtyDays, id: jwtPayload.id}, config.common.jwt_refresh_secret);
 
                 redisClient.hmset(`refreshTokenUser${jwtPayload.id}`, tokenTimeStampName, refreshToken);
 
                 response = {
-                    timeStamp,
                     accessToken,
                     refreshToken,
-                    expiresIn: jwtPayload.exp,
+                    expiresIn: oneDay,
                 };
 
-                console.log("---response---", response)
                 return res.status(200).json(response);
             }
         }
@@ -152,7 +127,6 @@ export const getNewAccessToken = async (req, res, next) => {
             return res.status(401).json({messageNewToken: "This token is old or invalid."});
         }
     } catch (error) {
-        console.log("error", error)
         return res.status(400).json({message: error.message});
     }
 };

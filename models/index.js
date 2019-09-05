@@ -17,6 +17,9 @@ const models = Object.assign({}, ...fs.readdirSync(__dirname)
     )
     .map(file => {
         const model = require(path.join(__dirname, file));
+        const test = {
+            [model.default.name]: model.default.init(sequelize),
+        }
         return {
             [model.default.name]: model.default.init(sequelize),
         };

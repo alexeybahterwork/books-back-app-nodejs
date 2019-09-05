@@ -7,7 +7,15 @@ import redisClient from '../../redis'
 
 Promise.resolve()
     .then(async () => {
-        const user = {email: "test_example_36@example.com", password: "123456"};
+        const user = {
+            email: "test_example_02@example.com",
+            first_name: "Alexey",
+            last_name: "Bakhter",
+            day_of_birthday: new Date(),
+            role: "developer",
+            status: "active",
+            password: "123456"
+        };
         const existingUser = await models.User.findOne({ where: { email: user.email }});
 
         if (existingUser) {

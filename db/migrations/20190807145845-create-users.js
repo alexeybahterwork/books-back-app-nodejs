@@ -12,6 +12,33 @@ module.exports = {
             email: {
                 type: new dataTypes.STRING,
                 allowNull: false,
+                validate: {
+                    isEmail:true
+                },
+                unique: {
+                    args: true,
+                    msg: 'Email address already in use!'
+                }
+            },
+            first_name: {
+                type: new dataTypes.STRING,
+                allowNull: true,
+            },
+            last_name: {
+                type: new dataTypes.STRING,
+                allowNull: true,
+            },
+            day_of_birthday: {
+                type: new dataTypes.DATE,
+                allowNull: true,
+            },
+            role: {
+                type: new dataTypes.STRING,
+                allowNull: false,
+            },
+            status: {
+                type: new dataTypes.STRING,
+                allowNull: false,
             },
             encrypted_password: {
                 type: new dataTypes.STRING,

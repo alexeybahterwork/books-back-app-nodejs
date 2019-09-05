@@ -18,8 +18,8 @@ let config = {
             "port": 4000,
             "jwt_secret": "12345",
             "jwt_refresh_secret": "54321",
-            "accessTokenExpiresIn": "1d",
-            "refreshTokenExpiresIn": "30d"
+            "accessTokenExpiresIn": "1",
+            "refreshTokenExpiresIn": "30"
         },
         "postgres_port": "5432",
         "dialect": "postgres",

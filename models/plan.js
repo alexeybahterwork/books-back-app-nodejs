@@ -1,12 +1,12 @@
 import {DataTypes, Model} from "sequelize";
 import User from './user';
+import Task from "./task";
 
-export default class Book extends Model {
+export default class Plan extends Model {
     static init(sequelize) {
         return super.init({
             title: DataTypes.STRING,
-            description: DataTypes.STRING,
-            price: DataTypes.STRING
+            description: DataTypes.STRING
         }, {
             sequelize,
             hooks: {
@@ -29,8 +29,16 @@ export default class Book extends Model {
     static associate() {
         this.belongsTo(User, {
             onDelete: "CASCADE",
-            as: 'author',
-            foreignKey: 'user_id'
+            foreignKey: 'user_id',
+            as: 'developers',
+        });
+
+        this.belongsToMany(Task, {
+            through: 'PlanTasks',
+            onDelete: "CASCADE",
+            foreignKey: 'plan_id',
+            as: 'tasks',
+            constraints: false
         });
     }
 };

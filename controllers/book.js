@@ -10,7 +10,6 @@ export const getBooks = async (req, res) => {
             throw new Error({status: 400, message: 'Page is empty'})
         }
 
-        // const newToken = res.locales.newToken
         const booksWithCount = await Book.findAllBooks({page, per_page, sortItem: sortItem, sortMethod: sortMethod});
         const books = JSON.parse(JSON.stringify(booksWithCount.rows));
         totalItems = JSON.stringify(booksWithCount.count);
@@ -20,7 +19,7 @@ export const getBooks = async (req, res) => {
 
         return res.status(200).json(response);
     } catch (error) {
-        return res.status(400).json(error.message)
+        return res.status(400).json(error.message);
     }
 };
 
