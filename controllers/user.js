@@ -20,7 +20,7 @@ export const getUser = async (req, res) => {
         const oneUser = await User.findOneUser(userId);
         return res.status(200).json(oneUser)
     } catch (error) {
-        return res.status(400).json(error);
+        return res.status(400).json({error: error.message});
     }
 };
 

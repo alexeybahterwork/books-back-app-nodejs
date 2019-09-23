@@ -9,28 +9,13 @@ export default class Technology extends Model {
             groups: DataTypes.ARRAY(DataTypes.TEXT)
         }, {
             sequelize,
-            hooks: {
-                beforeCreate: this.beforeCreate,
-                afterCreate: this.afterCreate,
-                beforeUpdate: this.beforeUpdate
-            }
         });
-    }
-
-    static beforeCreate() {
-    }
-
-    static afterCreate() {
-    }
-
-    static beforeUpdate() {
     }
 
     static associate() {
         this.belongsToMany(Project, {
             through: 'TechnologyProjects',
             foreignKey: 'technology_id',
-            // as: 'Projects'
         });
     }
 };

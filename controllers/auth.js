@@ -19,8 +19,8 @@ export const authUser = (req, res, next) => {
                 if (error) return res.status(400).json({message: error});
 
                 const maxLoggedUsers = 5;
-                const oneDay = moment().add(config.common.accessTokenExpiresIn,'days').unix();
-                const thirtyDays = moment().add(config.common.refreshTokenExpiresIn,'days').unix();
+                const oneDay = moment().add(config.common.accessTokenExpiresIn, 'days').unix();
+                const thirtyDays = moment().add(config.common.refreshTokenExpiresIn, 'days').unix();
                 const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
                 const countLoggedUsers = refreshTokens ? Object.keys(refreshTokens).length + 1 : 0;
 
@@ -35,7 +35,7 @@ export const authUser = (req, res, next) => {
                 await redisClient.hmset(`refreshTokenUser${user.id}`, `refreshTokenTimestamp-${uuid}`, refreshToken);
 
                 const response = {
-                    "status": "Logged in",
+                    status: "Logged in",
                     accessToken,
                     refreshToken,
                     expiresIn: oneDay,
@@ -71,27 +71,50 @@ export const checkAuth = (req, res, next) => {
     }
 };
 
-export const logOut = async (req, res, next) => {
+export const checkAuthWithUserInfo = (req, res) => {
     try {
-        const {token: tokenReq} = req.body;
-        if (!tokenReq) throw new Error('refreshToken is empty or invalid field');
+        passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+            if (err) throw new Error(err);
 
-        const jwtPayload = jwt.verify(tokenReq, config.common.jwt_secret);
+            const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${user.id}`);
 
-        redisClient.del(`refreshTokenUser${jwtPayload.id}`);
-        const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${jwtPayload.id}`);
+            if (!refreshTokens || !user) {
+                return res.status(400).json({status: 'Not logged in', message: 'User not authorized'});
+            }
 
-        if (!refreshTokens) {
-            const response = {messages: 'The user has logged off.'};
+            if (info) {
+                throw new Error('Error! You have same errors.');
+            } else {
+                const userInfo = user.get();
 
-            return res.status(200).json(response);
-        }
+                return res.status(200).json({...userInfo});
+            }
+        })(req, res);
     } catch (error) {
         return res.status(400).json({message: error.message});
     }
 };
 
-export const getNewAccessToken = async (req, res, next) => {
+export const logOut = async (req, res, next) => {
+    try {
+        const {accessToken} = req.body;
+
+        if (!accessToken) throw new Error('refreshToken is empty or invalid field');
+
+        const jwtPayload = jwt.verify(accessToken, config.common.jwt_secret);
+        const refreshTokens = await redisClient.getHashAsync(`refreshTokenUser${jwtPayload.id}`);
+
+        if (!refreshTokens) return res.status(200).json({messages: 'The user is already logged out.'});
+
+        redisClient.del(`refreshTokenUser${jwtPayload.id}`);
+
+        return res.status(200).json({messages: 'The user is logged out '});
+    } catch (error) {
+        return res.status(400).json({message: error.message});
+    }
+};
+
+export const getNewTokens = async (req, res, next) => {
     const {refreshToken: refreshTokenReq} = req.body;
 
     try {
@@ -102,8 +125,8 @@ export const getNewAccessToken = async (req, res, next) => {
 
         if (!refreshTokens) throw new Error('User not authorized.');
 
-        const oneDay = moment().add(config.common.accessTokenExpiresIn,'days').unix();
-        const thirtyDays = moment().add(config.common.refreshTokenExpiresIn,'days').unix();
+        const oneDay = moment().add(config.common.accessTokenExpiresIn, 'days').unix();
+        const thirtyDays = moment().add(config.common.refreshTokenExpiresIn, 'days').unix();
         let response = {};
 
         for (let tokenTimeStampName in refreshTokens) {
@@ -124,9 +147,9 @@ export const getNewAccessToken = async (req, res, next) => {
         }
 
         if (_.isEmpty(response)) {
-            return res.status(401).json({messageNewToken: "This token is old or invalid."});
+            return res.status(401).json({message: "This token is old or invalid."});
         }
     } catch (error) {
-        return res.status(400).json({message: error.message});
+        return res.status(400).json({message: error.message, status: '400'});
     }
 };

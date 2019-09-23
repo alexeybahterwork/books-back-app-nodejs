@@ -12,6 +12,9 @@ module.exports = {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            order: {
+                type: DataTypes.ARRAY(DataTypes.INTEGER),
+            },
             description: {
                 type: DataTypes.STRING,
                 allowNull: false,

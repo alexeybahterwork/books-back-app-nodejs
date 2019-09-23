@@ -30,11 +30,8 @@ Promise.resolve()
 
             const refreshToken = jwt.sign({id: userParse.id}, config.common.jwt_secret, {expiresIn: "60d"});
 
-            console.log("user-${userParse.id}", `user-${userParse.id}`);
 
             redisClient.hmset(`refreshTokenUser${userParse.id}`, `refreshTokenTimestamp-${userParse.id}`, refreshToken, function (err, res) {
-                console.log("err", err);
-                console.log("res", res);
             });
             console.info("user has been created", user);
         }

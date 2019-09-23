@@ -39,7 +39,7 @@ export default class Task extends Model {
             through: 'PlanTasks',
             onDelete: "CASCADE",
             foreignKey: 'task_id',
-            as: 'tasks',
+            as: 'plan',
             constraints: false
         });
     }

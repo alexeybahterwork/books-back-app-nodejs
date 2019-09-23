@@ -10,6 +10,7 @@ module.exports = {
             },
             plan_id: {
                 type: DataTypes.INTEGER,
+                onDelete: 'CASCADE',
                 references: {
                     model: 'plans',
                     key: 'id'
@@ -17,10 +18,24 @@ module.exports = {
             },
             task_id: {
                 type: DataTypes.INTEGER,
+                onDelete: 'CASCADE',
                 references: {
                     model: 'tasks',
                     key: 'id'
                 }
+            },
+            priority: {
+                type: DataTypes.INTEGER,
+            },
+            status: {
+                type: DataTypes.STRING,
+                defaultValue: 'pending'
+            },
+            start_time: {
+                type: DataTypes.STRING,
+            },
+            spent_time: {
+                type: DataTypes.STRING,
             },
             created_at: {
                 type: DataTypes.DATE

@@ -1,5 +1,6 @@
 import User from "../models/user";
 import Task from "../models/task";
+import Plan from "../models/plan";
 
 export const findAllTasks = () => {
 
@@ -20,24 +21,29 @@ export const findAllTasks = () => {
 };
 
 export const findOneTask = (id) => {
-    const model = Task;
-    for (let assoc of Object.keys(model.associations)) {
-        for (let accessor of Object.keys(model.associations[assoc].accessors)) {
-            console.log(model.name + '.' + model.associations[assoc].accessors[accessor]+'()');
-        }
-    }
     return Task.findOne({
+        where: {id},
         include: [{
-            where: {id},
             model: User,
+            // where: {id},
             as: 'developers',
             attributes: {
                 exclude: ['encryptedPassword', 'createdAt', 'updatedAt']
             },
+            required: false,
             through: {
-                // where: {id},
-                attributes: ['status', 'priority', 'spent_time']
+                attributes: []
             },
+        }, {
+            model: Plan,
+            as: 'plan',
+            through: {
+                as: 'taskInfo',
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'plan_id', 'task_id']
+                }
+            },
+            attributes: ['id', 'title']
         }],
         attributes: ["id", "title", "description"]
     });
@@ -48,10 +54,33 @@ export const createTask = (task) => {
         task,
         {
             include: [{
-                model: User,
-                as: 'developers'
+                model: Plan,
+                as: 'plan'
             }],
             returning: true
         }
     );
+};
+
+
+export const updateTask = async (id, task) => {
+    return Task.update(
+        {
+            ...task
+        },
+        {
+            where: {id},
+            include: [{model: User}, {model: Plan, as: 'plan'}],
+            returning: true,
+        }
+    )
+};
+
+export const deleteTask = async (id) => {
+    return Task.destroy(
+        {
+            where: {id},
+            include: [{model: User}],
+        }
+    )
 };

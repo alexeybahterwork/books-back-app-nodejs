@@ -40,8 +40,6 @@ export default class Project extends Model {
             through: 'TechnologyProjects',
             onDelete: "CASCADE",
             foreignKey: 'project_id',
-            // as: 'Technologies',
-            // constraints: false
         });
     }
 };

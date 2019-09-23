@@ -38,7 +38,7 @@ export default class User extends Model {
 
         this.hasOne(Plan, {
             onDelete: "CASCADE",
-            as: 'developers',
+            as: 'plan',
             foreignKey: 'user_id'
         });
 

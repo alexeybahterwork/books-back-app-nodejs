@@ -5,7 +5,6 @@ export const findAllTechnologies = () => {
     return Technology.findAll({
         include: [{
             model: Project,
-            // as: 'Projects',
             through: {
                 attributes: []
             },
@@ -33,7 +32,6 @@ export const createTechnology = async (technology) => {
         {
             include: [{
                 model: Project,
-                // as: 'Projects'
             }],
             returning: true
         })

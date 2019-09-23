@@ -22,15 +22,6 @@ module.exports = {
                     key: 'id'
                 }
             },
-            priority: {
-                type: DataTypes.INTEGER,
-            },
-            status: {
-                type: DataTypes.STRING,
-            },
-            spent_time: {
-                type: DataTypes.STRING,
-            },
             created_at: {
                 type: DataTypes.DATE
             },

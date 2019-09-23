@@ -26,7 +26,6 @@ export const getTechnology = async (req, res) => {
 
 export const createTechnology = async (req, res) => {
     const params = req.body;
-    // const project_ids = JSON.parse(params.project_ids)
 
     try {
         if (!params) {
@@ -34,7 +33,6 @@ export const createTechnology = async (req, res) => {
         }
 
         const createdTechnology = await Technology.createTechnology(params);
-        // createdTechnology.addProjects(project_ids);
 
         return res.status(200).json(createdTechnology)
     } catch (error) {

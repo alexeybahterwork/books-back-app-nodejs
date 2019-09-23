@@ -23,6 +23,7 @@ export const findOneBook = (id) => {
         where: {id},
         include: [{
             model: User,
+            as: 'author',
             attributes: {
                 exclude: ['encryptedPassword', 'createdAt', 'updatedAt']
             }
@@ -35,7 +36,10 @@ export const createBook = (book) => {
     return Book.create(
         book,
         {
-            include: [{model: User}]
+            include: [{
+                model: User,
+                as: 'author',
+            }]
         }
     );
 };

@@ -2,24 +2,24 @@ import * as config from '../config/index'
 import * as bcrypt from "bcryptjs";
 import passport from "passport";
 import models from "../models";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import {Strategy as LocalStrategy} from "passport-local";
+import {Strategy as JWTStrategy, ExtractJwt} from "passport-jwt";
 
 passport.use("local", new LocalStrategy({
         usernameField: "email",
         passwordField: "password",
-    }, async (email, password, done ) => {
+    }, async (email, password, done) => {
         const user = await models.User.findOne({
-            where: { email },
+            where: {email},
             attributes: ["id", "encryptedPassword"],
             raw: true,
         });
         if (!user) {
-            return done(null, false, { message: "User doesnt exist" });
+            return done(null, false, {message: "User doesnt exist"});
         }
         const isPasswordCorrect = await bcrypt.compare(password, user.encryptedPassword);
         if (!isPasswordCorrect) {
-            return done(null, false, { message: "Password is incorrect" });
+            return done(null, false, {message: "Password is incorrect"});
         }
         return done(null, user);
     }
@@ -34,7 +34,11 @@ passport.use("jwt", new JWTStrategy({
         models.User.findOne({
             where: {
                 id: jwtPayload.id
-            }
+            },
+            attributes: {
+                exclude: ["createdAt", "updatedAt", "encryptedPassword"]
+            },
+
         }).then(user => {
             if (user) {
                 done(null, user);
@@ -53,11 +57,11 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
     const user = models.User.findOne({
-        where: { id },
+        where: {id},
         raw: true,
     });
     user ? done(null, user) : done(null);
-    models.User.findOne({ where: { id }})
+    models.User.findOne({where: {id}})
         .then(desUser => {
             done(null, desUser);
         })

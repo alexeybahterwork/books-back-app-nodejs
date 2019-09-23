@@ -6,7 +6,8 @@ export default class Plan extends Model {
     static init(sequelize) {
         return super.init({
             title: DataTypes.STRING,
-            description: DataTypes.STRING
+            description: DataTypes.STRING,
+            order: DataTypes.ARRAY(DataTypes.INTEGER)
         }, {
             sequelize,
             hooks: {
@@ -30,7 +31,7 @@ export default class Plan extends Model {
         this.belongsTo(User, {
             onDelete: "CASCADE",
             foreignKey: 'user_id',
-            as: 'developers',
+            as: 'developer',
         });
 
         this.belongsToMany(Task, {
