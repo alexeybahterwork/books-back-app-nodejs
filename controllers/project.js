@@ -1,4 +1,4 @@
-import * as Project from "../middlewares/project";
+import * as Project from "../db/services/project";
 
 export const getProjects = async (req, res) => {
     try {

@@ -1,5 +1,5 @@
-import * as Task from "../middlewares/task";
-import * as Plan from "../middlewares/plan";
+import * as Task from "../db/services/task";
+import * as Plan from "../db/services/plan";
 
 export const getTasks = async (req, res) => {
     try {
@@ -37,16 +37,18 @@ export const createTask = async (req, res) => {
         }
 
         const createdTask = await Task.createTask(params);
-        const taskId = createdTask.get().id
+        const taskId = createdTask.id;
 
         const planAndTaskId = {
             plan_id: planId,
             task_id: taskId
         }
 
-        await Plan.updateOrderPlan(planAndTaskId);
+        await Promise.all([
+            Plan.updateOrderPlan(planAndTaskId),
+            createdTask.addPlan(planId, { through: {status, spent_time}})
+        ]);
 
-        createdTask.addPlan(planId, { through: {status, spent_time}});
 
         return res.status(201).json(createdTask)
     } catch (error) {

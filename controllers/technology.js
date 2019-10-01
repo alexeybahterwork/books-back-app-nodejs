@@ -1,4 +1,4 @@
-import * as Technology from "../middlewares/technology";
+import * as Technology from "../db/services/technology";
 
 export const getTechnologies = async (req, res) => {
     try {

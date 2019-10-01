@@ -1,4 +1,4 @@
-import PlanTasks from "../models/planTasks";
+import PlanTasks from "../../models/planTasks";
 
 export const updateTaskOfPlan = async (params) => {
     return PlanTasks.update({

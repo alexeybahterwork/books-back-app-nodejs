@@ -1,6 +1,6 @@
-import User from "../models/user";
-import Task from "../models/task";
-import Plan from "../models/plan";
+import User from "../../models/user";
+import Task from "../../models/task";
+import Plan from "../../models/plan";
 
 export const findAllTasks = () => {
 

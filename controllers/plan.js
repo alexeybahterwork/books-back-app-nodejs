@@ -1,6 +1,6 @@
-import * as Plan from "../middlewares/plan";
-import * as PlanTasks from "../middlewares/planTasks";
-import * as Task from "../middlewares/task";
+import * as Plan from "../db/services/plan";
+import * as PlanTasks from "../db/services/planTasks";
+import * as Task from "../db/services/task";
 import moment from "moment";
 
 export const getPlans = async (req, res) => {

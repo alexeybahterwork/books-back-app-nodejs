@@ -1,9 +1,9 @@
 // import * as sequelize from 'sequelize'
 const sequelize = require('sequelize');
 
-import User from "../models/user";
-import Plan from "../models/plan";
-import Task from "../models/task";
+import User from "../../models/user";
+import Plan from "../../models/plan";
+import Task from "../../models/task";
 
 export const findAllPlans = () => {
     return Plan.findAll({

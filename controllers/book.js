@@ -1,4 +1,4 @@
-import * as Book from '../middlewares/book'
+import * as Book from '../db/services/book'
 
 export const getBooks = async (req, res) => {
     const {page=1, per_page=3, sortItem='id', sortMethod='desc'} = req.query;
@@ -7,7 +7,7 @@ export const getBooks = async (req, res) => {
     try {
 
         if (!page) {
-            throw new Error({status: 400, message: 'Page is empty'})
+            throw {status: 400, message: 'Page is empty'}
         }
 
         const booksWithCount = await Book.findAllBooks({page, per_page, sortItem: sortItem, sortMethod: sortMethod});
@@ -19,7 +19,7 @@ export const getBooks = async (req, res) => {
 
         return res.status(200).json(response);
     } catch (error) {
-        return res.status(400).json(error.message);
+        return res.status(error.status || 500).json(error.message);
     }
 };
 

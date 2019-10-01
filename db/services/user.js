@@ -1,10 +1,10 @@
 import * as bcrypt from "bcryptjs";
-import User from "../models/user";
-import Project from "../models/project";
-import Task from "../models/task";
-import Plan from "../models/plan";
+import User from "../../models/user";
+import Project from "../../models/project";
+import Task from "../../models/task";
+import Plan from "../../models/plan";
 
-export const findAllUsers = () => {
+export const findAllUsers = (options = {}) => {
     return User.findAll({
         include: [{
             model: Project,
@@ -14,18 +14,15 @@ export const findAllUsers = () => {
                 attributes: []
             },
         }, {
-            model: Task,
-            as: 'tasks',
+            model: Plan,
+            as: 'plan',
             attributes: ['id', 'title', 'description'],
-            through: {
-                attributes: ['status', 'priority', 'spent_time'],
-                as: 'tasks_of_user'
-            },
         },
         ],
         attributes: {
             exclude: ['encryptedPassword', 'createdAt', 'updatedAt']
-        }
+        },
+        ...options
     });
 };
 

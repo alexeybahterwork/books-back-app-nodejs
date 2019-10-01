@@ -3,6 +3,6 @@ import * as authController from "../controllers/auth";
 
 module.exports = Router({mergeParams: true})
     .post('/auth', authController.authUser)
-    .get('/check-auth', authController.checkAuthWithUserInfo)
-    .post('/token', authController.getNewTokens)
-    .post('/logout', authController.logOut);
+    .get('/auth/check', authController.checkAuthWithUserInfo)
+    .post('/auth/token', authController.getNewTokens)
+    .get('/logout', authController.logOut);

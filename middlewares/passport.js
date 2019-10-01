@@ -1,4 +1,4 @@
-import * as config from '../config/index'
+import * as config from '../config'
 import * as bcrypt from "bcryptjs";
 import passport from "passport";
 import models from "../models";

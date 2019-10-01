@@ -1,4 +1,4 @@
-import * as User from '../middlewares/user'
+import * as User from '../db/services/user'
 
 export const getUsers = async (req, res) => {
     try {

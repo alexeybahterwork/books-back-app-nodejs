@@ -1,5 +1,5 @@
-import User from "../models/user";
-import Book from "../models/book";
+import User from "../../models/user";
+import Book from "../../models/book";
 
 export const findAllBooks = ({page = 1, per_page = 3, sortItem = 'id', sortMethod = 'ASC'}) => {
 

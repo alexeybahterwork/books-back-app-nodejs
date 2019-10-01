@@ -1,5 +1,5 @@
 import models from "../../models";
-import { hashPassword } from "../../middlewares/user";
+import { hashPassword } from "../services/user";
 import * as jwt from "jsonwebtoken";
 import * as config from "../../config";
 import redisClient from '../../redis'

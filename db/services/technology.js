@@ -1,5 +1,5 @@
-import Technology from "../models/technology";
-import Project from "../models/project";
+import Technology from "../../models/technology";
+import Project from "../../models/project";
 
 export const findAllTechnologies = () => {
     return Technology.findAll({

@@ -1,6 +1,6 @@
-import Project from "../models/project";
-import User from "../models/user";
-import Technology from "../models/technology";
+import Project from "../../models/project";
+import User from "../../models/user";
+import Technology from "../../models/technology";
 
 export const findAllProjects = () => {
     return Project.findAll({
